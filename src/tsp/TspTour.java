@@ -218,7 +218,7 @@ public class TspTour {
 	/**
 	 * Applies the twoOptBest algorithm on the current tour
 	 */
-	public void twoOptBest() {
+	public void applyTwoOptBest() {
 		long[] exchange;
 		long improvement;
 		boolean improvable;

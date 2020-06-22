@@ -34,9 +34,17 @@ public class TspExperiment implements Experiment {
 	 */
 	@Override
 	public double execute(Random rnd) {
-		// TODO Write your code here
-		TspTour tspTour = new TspTour(data);
-		tspTour.createRandomTour(new Random().nextLong());
+		// On obtient un sample des villes de data
+		TspSampledDataWithDepot tspSampledDataWithDepot = new TspSampledDataWithDepot(data, depot, samplingProb, rnd);
+
+		// On crée un tspTour avec ce nouveau data set
+		TspTour tspTour = new TspTour(tspSampledDataWithDepot);
+
+		// On applique le nearest neighbor tour finder
+		tspTour.CreateNearestNeighborFromBothEndsTourSolution(depot);
+		
+		// On applique le 2-opt best
+		tspTour.applyTwoOptBest();
 
 		return tspTour.getTourLength();
 	}
