@@ -1,5 +1,6 @@
 package montecarlo;
 
+import statistics.InverseStdNormalCDF;
 import statistics.StatCollector;
 
 import java.util.Random;
@@ -55,8 +56,28 @@ public class MonteCarloSimulation {
 													long additionalNumberOfRuns,
 													Random rnd,
 													StatCollector stat) {
-		//TODO Write your code here
+		// 1) Dans une première phase Ninit simulations de l’expérience sont effectuées
 		simulateNRuns(exp, initialNumberOfRuns, rnd, stat);
 
+		// 2) À partir des données récoltées une estimation du nombre N de réalisations à générer
+		//    afin d’obtenir un intervalle de confiance dont la demi-largeur ne dépasse pas (delta)max est
+		//    effectuée. Cette valeur de N est ensuite arrondie, vers le haut, au plus proche multiple
+		//    de Nadd.
+		double normalQuantile = InverseStdNormalCDF.getQuantile(0.5 - level / 2.0);
+		double estimationOfN = Math.pow(((normalQuantile * stat.getStandardDeviation()) / maxHalfWidth), 2);
+		estimationOfN = Math.ceil(estimationOfN / additionalNumberOfRuns) * additionalNumberOfRuns;
+
+		// 3) La simulation est poursuivie jusqu’à atteindre N réalisations de l’expérience.
+		long numberOfRealisationToReachN = (long) estimationOfN - initialNumberOfRuns;
+		simulateNRuns(exp, numberOfRealisationToReachN, rnd, stat);
+
+		// 4) Si la demi-largeur de l’intervalle de confiance, calculé sur la base de ces N réalisations,
+		//    est inférieure ou égale à (delta)max le processus s’arrête. Sinon Nadd simulations supplémentaires
+		//    sont effectuées avant de recalculer un nouvel intervalle de confiance et de retester
+		//    la condition d’arrêt. Ce processus est répété jusqu’à ce que la condition d’arrêt soit
+		//    satisfaite.
+		while (stat.getConfidenceIntervalHalfWidth(level) > maxHalfWidth) {
+			simulateNRuns(exp, additionalNumberOfRuns, rnd, stat);
+		}
 	}
 }

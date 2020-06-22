@@ -42,7 +42,7 @@ public class TspExperiment implements Experiment {
 
 		// On applique le nearest neighbor tour finder
 		tspTour.CreateNearestNeighborFromBothEndsTourSolution(depot);
-		
+
 		// On applique le 2-opt best
 		tspTour.applyTwoOptBest();
 

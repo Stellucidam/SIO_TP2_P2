@@ -17,7 +17,7 @@ public class Main {
 		Random rnd = new Random(20200525);
 		Experiment exp = new TspExperiment(tspData, 0, 0.6);
 
-		MonteCarloSimulation.simulateNRuns(exp, 10, rnd, stat);
+		MonteCarloSimulation.simulateTillGivenCIHalfWidth(exp, 0.95, 50, 2000, 500, rnd, stat);
 
 		System.out.printf("**********************%n  Simulation results%n**********************%n");
 		System.out.printf("Nb of runs : %d%n", stat.getNumberOfObs());
