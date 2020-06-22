@@ -76,7 +76,7 @@ public class MonteCarloSimulation {
 		//    sont effectuées avant de recalculer un nouvel intervalle de confiance et de retester
 		//    la condition d’arrêt. Ce processus est répété jusqu’à ce que la condition d’arrêt soit
 		//    satisfaite.
-		while (stat.getConfidenceIntervalHalfWidth(level) > maxHalfWidth) {
+		while (stat.getConfidenceIntervalHalfWidth(level) >= maxHalfWidth) {
 			simulateNRuns(exp, additionalNumberOfRuns, rnd, stat);
 		}
 	}

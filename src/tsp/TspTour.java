@@ -139,26 +139,40 @@ public class TspTour {
 		tour[0] 	= start;
 		tourLength 	= 0;
 
+		boolean
+				choseT = false,
+				choseS = false;
+
 		// Determine the nearest city to start and add it to the tour
 		int cityS = start,
 				cityT = start,
 				sIndex = 0,
 				tIndex = 0;
 
+		int nearestToS = nearestCityTo(cityS, visited);
+		int nearestToT = nearestCityTo(cityT, visited);
+
+		int distFromT = data.getDistance(cityT, nearestToT);
+		int distFromS = data.getDistance(cityS, nearestToS);
+
 		// While the number of unvisited cities is >= 1...
 		while (numberOfUnvisitedCities(visited) >= 1) {
 			// Determine the nearest unvisited city to s or t
-			int nearestToS = nearestCityTo(cityS, visited);
-			int nearestToT = nearestCityTo(cityT, visited);
-
-			int distFromT = data.getDistance(cityT, nearestToT);
-			int distFromS = data.getDistance(cityS, nearestToS);
+			if(choseT) {
+				// If city T was changed
+				nearestToT = nearestCityTo(cityT, visited);
+				distFromT = data.getDistance(cityT, nearestToT);
+			}
+			if(choseS) {
+				// If city S was changed
+				nearestToS = nearestCityTo(cityS, visited);
+				distFromS = data.getDistance(cityS, nearestToS);
+			}
 
 			// Check which city (nearestToS or nearestToT) is the nearest to it's corresponding neighbor
 			// We chose the city with the smallest distance to it's neighbor
 			// If both distances are equal, we chose the smallest city (int value)
-			if ( distFromS > distFromT ||
-					(distFromS == distFromT && nearestToS > nearestToT)) {
+			if (distFromS > distFromT) {
 				// Add the next city next to t
 				tour[data.getNumberOfCities() - ++tIndex] = nearestToT;
 				tourLength += distFromT;
@@ -166,6 +180,8 @@ public class TspTour {
 				visited[nearestToT] = true;
 				// Update t
 				cityT = nearestToT;
+				choseT = true;
+				choseS = false;
 			} else {
 				// Add the next city next to s
 				tour[++sIndex] = nearestToS;
@@ -174,6 +190,8 @@ public class TspTour {
 				visited[nearestToS] = true;
 				// Update s
 				cityS = nearestToS;
+				choseS = true;
+				choseT = false;
 			}
 		}
 		tourLength += data.getDistance(cityS, cityT);
